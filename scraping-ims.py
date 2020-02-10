@@ -17,15 +17,21 @@ ds_view= pd.DataFrame(df, columns=['Record_Name_1'])
 ds_out=[]
 #pesquisa por célula do dataframe 
 def websearch (ds_view):
-    chrome_options = webdriver.ChromeOptions()
-    chrome_options.add_argument('headless')
+    #chrome_options = webdriver.ChromeOptions()
+    #chrome_options.add_argument('headless')
     for cell in df["Record_Name_1"]:
         record_name=(str(cell))
-        with webdriver.Chrome(chrome_options=chrome_options) as driver:
+        with webdriver.Chrome () as driver:
             driver.get('http://201.73.128.131:8080/portals/#/search/')
-            WebDriverWait(driver,10).until(lambda s: s.find_element_by_id("search").is_displayed())
-            driver.find_element_by_id("search").send_keys(str(record_name) + Keys.RETURN)
-            driver.find_element("h-ref")
-            ds_view['URL']= ds_view.apply(lambda row: row.Record_Name_1, axis=1)
-    print (ds_view)
+            wait = WebDriverWait(driver,30)
+            wait.until(lambda s: s.find_element_by_id("search").is_displayed())
+            search = driver.find_element_by_id("search").send_keys(str(record_name) + Keys.RETURN)
+            wait.until(lambda s: s.find_element_by_xpath('/html/body/div[1]/div/section/search-result/section/section/section/div/assets/section/section/section/asset/section/div/div/asset-thumbnail/a').is_displayed())
+            url = driver.find_element_by_xpath('/html/body/div[1]/div/section/search-result/section/section/section/div/assets/section/section/section/asset/section/div/div/asset-thumbnail/a').get_attribute('href')
+            print (url)
+              
+            
+
+            
+    
 websearch(ds_view)
